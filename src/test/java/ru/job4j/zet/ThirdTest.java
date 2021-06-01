@@ -11,4 +11,10 @@ public class ThirdTest {
         int one = new Third().justGivingThreeInt();
         assertThat(one, is(3));
     }
+
+    @Test
+    public void whenReceivingThreeMoreInt() {
+        int one = new Third().justGivingThreeInt();
+        assertThat(one, is(3));
+    }
 }
