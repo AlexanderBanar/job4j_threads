@@ -4,7 +4,10 @@ public class ConsoleProgress implements Runnable {
     @Override
     public void run() {
         int count = 0;
-        String[] symbols = getSymbols();
+        String[] symbols = new String[3];
+        symbols[0] = "(  ";
+        symbols[1] = "  )";
+        symbols[2] = " _ ";
         int symbolCount = 0;
         while (!Thread.currentThread().isInterrupted()
         && count < 101) {
@@ -18,14 +21,6 @@ public class ConsoleProgress implements Runnable {
                 symbolCount = 0;
             }
         }
-    }
-
-    private String[] getSymbols() {
-        String[] symbols = new String[3];
-        symbols[0] = "(  ";
-        symbols[1] = "  )";
-        symbols[2] = " _ ";
-        return symbols;
     }
 
     public static void main(String[] args) throws InterruptedException {
