@@ -4,10 +4,7 @@ public class ConsoleProgress implements Runnable {
     @Override
     public void run() {
         int count = 0;
-        String[] symbols = new String[3];
-        symbols[0] = "(  ";
-        symbols[1] = "  )";
-        symbols[2] = " _ ";
+        String[] symbols = {"(  ", "  )", " _ "};
         int symbolCount = 0;
         while (!Thread.currentThread().isInterrupted()
         && count < 101) {
