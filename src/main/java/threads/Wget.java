@@ -5,10 +5,12 @@ import java.net.URL;
 
 public class Wget implements Runnable {
     private final String url;
+    private final String file;
     private final int speed;
 
-    public Wget(String url, int speed) {
+    public Wget(String url, String file, int speed) {
         this.url = url;
+        this.file = file;
         this.speed = speed;
     }
 
@@ -29,7 +31,7 @@ public class Wget implements Runnable {
 
     private void download() {
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream("file.txt")) {
+             FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
@@ -42,9 +44,14 @@ public class Wget implements Runnable {
 
     public static void main(String[] args) throws InterruptedException {
         String url = args[0];
-        int speed = Integer.parseInt(args[1]);
-        Thread wget = new Thread(new Wget(url, speed));
-        wget.start();
-        wget.join();
+        String file = args[1];
+        int speed = Integer.parseInt(args[2]);
+        if (url != null && file != null && speed > 0) {
+            Thread wget = new Thread(new Wget(url, file, speed));
+            wget.start();
+            wget.join();
+        } else {
+            System.out.println("Error! Program parameters are incorrect or missing!");
+        }
     }
 }
