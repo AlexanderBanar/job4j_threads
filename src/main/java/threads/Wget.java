@@ -46,7 +46,7 @@ public class Wget implements Runnable {
         String url = args[0];
         String file = args[1];
         int speed = Integer.parseInt(args[2]);
-        if (url != null && file != null && speed > 0) {
+        if (args.length == 3) {
             Thread wget = new Thread(new Wget(url, file, speed));
             wget.start();
             wget.join();
