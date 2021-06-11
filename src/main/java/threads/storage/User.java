@@ -3,8 +3,8 @@ package threads.storage;
 import java.util.Objects;
 
 public class User implements Userable {
-    private volatile int id;
-    private volatile int amount;
+    private int id;
+    private int amount;
 
     public User(int id, int amount) {
         this.id = id;
@@ -12,22 +12,22 @@ public class User implements Userable {
     }
 
     @Override
-    public synchronized int getId() {
+    public int getId() {
         return id;
     }
 
     @Override
-    public synchronized void setId(int newId) {
+    public void setId(int newId) {
         this.id = newId;
     }
 
     @Override
-    public synchronized int getAmount() {
+    public int getAmount() {
         return amount;
     }
 
     @Override
-    public synchronized void setAmount(int newAmount) {
+    public void setAmount(int newAmount) {
         this.amount = newAmount;
     }
 

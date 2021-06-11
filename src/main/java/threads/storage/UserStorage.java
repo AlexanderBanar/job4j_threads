@@ -7,17 +7,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ThreadSafe
 public class UserStorage implements Storagable {
-    private volatile Map<Integer, User> store = new ConcurrentHashMap<>();
+    private Map<Integer, User> store = new ConcurrentHashMap<>();
 
     @Override
     public synchronized boolean add(Userable user) {
-        User previousUser = store.put(user.getId(), (User) user);
-        return previousUser == null;
+        return store.putIfAbsent(user.getId(), (User) user) == null;
     }
 
     @Override
     public synchronized boolean update(Userable user) {
-        return add(user);
+        return store.replace(user.getId(), (User) user) != null;
     }
 
     @Override
@@ -30,12 +29,13 @@ public class UserStorage implements Storagable {
         boolean result = false;
         User fromUser = store.get(fromId);
         User toUser = store.get(toId);
-        fromUser.setAmount(fromUser.getAmount() - amount);
-        if (fromUser.getAmount() > 0) {
-            toUser.setAmount(toUser.getAmount() + amount);
-            store.put(fromId, fromUser);
-            store.put(toId, toUser);
-            result = true;
+        if (fromUser != null && toUser != null) {
+            int newAmountFromUser = fromUser.getAmount() - amount;
+            if (newAmountFromUser > 0) {
+                fromUser.setAmount(newAmountFromUser);
+                toUser.setAmount(toUser.getAmount() + amount);
+                result = true;
+            }
         }
         return result;
     }
