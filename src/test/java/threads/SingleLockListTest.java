@@ -2,6 +2,8 @@ package threads;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -11,7 +13,8 @@ import static org.junit.Assert.*;
 public class SingleLockListTest {
     @Test
     public void add() throws InterruptedException {
-        SingleLockList<Integer> list = new SingleLockList<>();
+        List<Integer> intList = new ArrayList<>();
+        SingleLockList<Integer> list = new SingleLockList<>(intList);
         Thread first = new Thread(() -> list.add(1));
         Thread second = new Thread(() -> list.add(2));
         first.start();
