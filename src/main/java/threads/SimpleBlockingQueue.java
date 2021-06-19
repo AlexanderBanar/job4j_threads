@@ -3,40 +3,39 @@ package threads;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 @ThreadSafe
 public class SimpleBlockingQueue<T> {
     @GuardedBy("this")
-    private final Queue<T> queue = new LinkedList<>(new ArrayList<>(3));
+    private final Queue<T> queue = new LinkedList<>();
     private final Object monitor = this;
+    private int currSize = 0;
+    private int maxSize;
 
-    public void offer(T value) {
+    public SimpleBlockingQueue(int maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public void offer(T value) throws InterruptedException {
         synchronized (monitor) {
-            if (queue.offer(value)) {
-                monitor.notifyAll();
-            } else {
-                try {
-                    monitor.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            while (currSize > maxSize) {
+                monitor.wait();
             }
+            queue.offer(value);
+            monitor.notifyAll();
+            currSize++;
         }
     }
 
-    public T poll() {
+    public T poll() throws InterruptedException {
         synchronized (monitor) {
-            if (queue.isEmpty()) {
-                try {
-                    monitor.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            while (currSize < 1) {
+                monitor.wait();
             }
             monitor.notifyAll();
+            currSize--;
             return queue.poll();
         }
     }
