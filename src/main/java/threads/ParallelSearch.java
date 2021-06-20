@@ -1,27 +1,21 @@
 package threads;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class ParallelSearch {
     public static void main(String[] args) {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
-        AtomicBoolean running = new AtomicBoolean(true);
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         final Thread consumer = new Thread(
                 () -> {
-                    while (running.get()) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         try {
                             System.out.println(queue.poll());
                         } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                        if (Thread.currentThread().getState() != Thread.State.RUNNABLE) {
-                            running.set(false);
+                            e.printStackTrace();
                         }
                     }
                 }
         );
         consumer.start();
-        new Thread(
+        Thread producer = new Thread(
                 () -> {
                     for (int index = 0; index != 3; index++) {
                         try {
@@ -36,7 +30,13 @@ public class ParallelSearch {
                         }
                     }
                 }
-
-        ).start();
+        );
+        producer.start();
+        while (producer.getState() == Thread.State.RUNNABLE
+                || producer.getState() == Thread.State.TERMINATED) {
+            if (consumer.getState() == Thread.State.WAITING) {
+                consumer.interrupt();
+            }
+        }
     }
 }
