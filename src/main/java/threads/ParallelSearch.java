@@ -1,7 +1,7 @@
 package threads;
 
 public class ParallelSearch {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         final Thread consumer = new Thread(
                 () -> {
@@ -9,7 +9,7 @@ public class ParallelSearch {
                         try {
                             System.out.println(queue.poll());
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
                     }
                 }
@@ -32,11 +32,7 @@ public class ParallelSearch {
                 }
         );
         producer.start();
-        while (producer.getState() == Thread.State.RUNNABLE
-                || producer.getState() == Thread.State.TERMINATED) {
-            if (consumer.getState() == Thread.State.WAITING) {
-                consumer.interrupt();
-            }
-        }
+        producer.join();
+        consumer.interrupt();
     }
 }
