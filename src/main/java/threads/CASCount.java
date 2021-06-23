@@ -1,6 +1,9 @@
 package threads;
 
 import net.jcip.annotations.ThreadSafe;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 @ThreadSafe
@@ -14,10 +17,10 @@ public class CASCount {
             if (temp == Integer.MAX_VALUE) {
                 throw new UnsupportedOperationException("Count is not implemented as already MAX valued");
             }
-        } while (!count.compareAndSet(temp, ++temp));
+        } while (!count.compareAndSet(temp, temp + 1));
     }
 
-    public synchronized int get() {
+    public int get() {
         if (count.get() == 0) {
             throw new UnsupportedOperationException("Count has not yet been implemented, 0 value");
         }
