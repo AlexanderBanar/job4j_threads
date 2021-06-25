@@ -18,7 +18,13 @@ public class Cache {
         Base modelNewVersioned = new Base(model.getId(), model.getVersion() + 1);
         modelNewVersioned.setName(model.getName());
         return memory.computeIfPresent(model.getId(),
-                (key, value) -> modelNewVersioned) != null;
+                (key, value) -> {
+            Base result = value;
+            if (value.getVersion() == model.getVersion()) {
+                result = modelNewVersioned;
+            }
+            return result;
+        }) != null;
     }
 
     public void delete(Base model) {
