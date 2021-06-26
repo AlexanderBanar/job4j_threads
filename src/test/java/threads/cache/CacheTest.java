@@ -24,14 +24,20 @@ public class CacheTest {
         assertThat(cache.add(base1), is(false));
     }
 
-//    @Test
-//    public void whenUpdateWithSameVersionAndTrue() {
-//        Base base1 = new Base(1, 1);
-//        Base base1WithVer2 = new Base(1, 2);
-//        Cache cache = new Cache();
-//        cache.add(base1);
-//        assertThat(cache.update(base1), is(true));
-//        assertThat(cache.update(base1WithVer2), is(false));
-//    }
+    @Test
+    public void whenUpdateWithSameVersionAndTrue() {
+        Base base1 = new Base(1, 1);
+        Cache cache = new Cache();
+        cache.add(base1);
+        assertThat(cache.update(base1), is(true));
+    }
 
+    @Test(expected = OptimisticException.class)
+    public void whenUpdateWithDiffVersionAndException() {
+        Base base1 = new Base(1, 2);
+        Base base1WithVer1 = new Base(1, 1);
+        Cache cache = new Cache();
+        cache.add(base1);
+        cache.update(base1WithVer1);
+    }
 }
