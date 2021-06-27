@@ -2,6 +2,7 @@ package threads;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadPool {
     private final List<Thread> threads = new LinkedList<>();
@@ -10,7 +11,7 @@ public class ThreadPool {
     public ThreadPool() {
         int size = Runtime.getRuntime().availableProcessors();
         for (int i = 0; i < size; i++) {
-            threads.add(new Thread(
+            Thread thread = new Thread(
                     () -> {
                         while (!Thread.currentThread().isInterrupted()) {
                             try {
@@ -20,7 +21,9 @@ public class ThreadPool {
                             }
                         }
                     }
-            ));
+            );
+            thread.start();
+            threads.add(thread);
         }
     }
 
@@ -32,5 +35,26 @@ public class ThreadPool {
         for (Thread thread : threads) {
             thread.interrupt();
         }
+    }
+
+    public static class Job implements Runnable {
+        int count = 0;
+
+        @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                System.out.println(count++);
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Job job = new Job();
+        Job job2 = new Job();
+        ThreadPool threadPool = new ThreadPool();
+        threadPool.work(job);
+        threadPool.work(job2);
+        Thread.sleep(2000);
+        threadPool.shutdown();
     }
 }
