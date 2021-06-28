@@ -38,10 +38,9 @@ public class ThreadPool {
     }
 
     public static class Job implements Runnable {
-        int count = 0;
-
         @Override
         public void run() {
+            int count = 0;
             while (!Thread.currentThread().isInterrupted()) {
                 System.out.println(count++);
             }
