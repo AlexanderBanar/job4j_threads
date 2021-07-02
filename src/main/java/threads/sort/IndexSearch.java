@@ -26,33 +26,26 @@ public class IndexSearch extends RecursiveTask<Integer> {
         IndexSearch rightParallelSearch = new IndexSearch(array, subject, mid + 1, to);
         leftParallelSearch.fork();
         rightParallelSearch.fork();
-        Integer leftResult = leftParallelSearch.join();
-        Integer rightResult = rightParallelSearch.join();
-        return (leftResult == null) ? rightResult : leftResult;
+        int leftResult = leftParallelSearch.join();
+        int rightResult = rightParallelSearch.join();
+        return (leftResult == -1) ? rightResult : leftResult;
     }
 
-    private Integer linearSearch() {
+    private int linearSearch() {
         int index = from;
         boolean flag = false;
-        while (index <= to) {
-            if (array[index].equals(subject)) {
+        for (int i = index; i <= to; i++) {
+            if (array[i].equals(subject)) {
                 flag = true;
+                index = i;
                 break;
             }
-            index++;
         }
-        return (flag) ? index : null;
+        return (flag) ? index : -1;
     }
 
     public static Integer search(Object[] array, Object subject) {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
         return forkJoinPool.invoke(new IndexSearch(array, subject, 0, array.length - 1));
-    }
-
-    public static void main(String[] args) {
-        Integer[] array = {1, 2, 5, 8, 10, 22, 16, 18, 7, 4, 55, 56, 58, 59};
-        Integer forSearch = 59;
-        Integer index = IndexSearch.search(array, forSearch);
-        System.out.println(index);
     }
 }
