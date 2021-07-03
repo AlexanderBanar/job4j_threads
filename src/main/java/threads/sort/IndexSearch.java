@@ -32,16 +32,12 @@ public class IndexSearch extends RecursiveTask<Integer> {
     }
 
     private int linearSearch() {
-        int index = from;
-        boolean flag = false;
-        for (int i = index; i <= to; i++) {
+        for (int i = from; i <= to; i++) {
             if (array[i].equals(subject)) {
-                flag = true;
-                index = i;
-                break;
+                return i;
             }
         }
-        return (flag) ? index : -1;
+        return -1;
     }
 
     public static Integer search(Object[] array, Object subject) {
