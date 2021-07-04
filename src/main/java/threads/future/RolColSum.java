@@ -1,6 +1,9 @@
 package threads.future;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class RolColSum {
     public static class Sums {
@@ -41,16 +44,20 @@ public class RolColSum {
         return sum;
     }
 
-    public static Sums[] asyncSum(int[][] matrix) {
+    public static Sums[] asyncSum(int[][] matrix) throws ExecutionException, InterruptedException {
         Sums[] sums = new Sums[matrix.length];
-        for (int i = 0; i < matrix.length; i++) {
-            int finalI = i;
-            CompletableFuture.runAsync(
-                    () -> {
-                        sums[finalI] = getSums(matrix, finalI);
-                    }
-            );
+        int n = matrix.length;
+        Map<Integer, CompletableFuture<Sums>> futures = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            futures.put(i, getTask(matrix, i));
+        }
+        for (Integer key : futures.keySet()) {
+            sums[key] = futures.get(key).get();
         }
         return sums;
+    }
+
+    private static CompletableFuture<Sums> getTask(int[][] matrix, int i) {
+        return CompletableFuture.supplyAsync(() -> getSums(matrix, i));
     }
 }

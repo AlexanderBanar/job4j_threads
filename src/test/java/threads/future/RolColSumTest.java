@@ -2,6 +2,8 @@ package threads.future;
 
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static threads.future.RolColSum.*;
@@ -24,14 +26,13 @@ public class RolColSumTest {
     }
 
     @Test
-    public void whenAsyncSumming() throws InterruptedException {
+    public void whenAsyncSumming() throws InterruptedException, ExecutionException {
         int[][] matrix = {
                 {1, 2, 3},
                 {4, 5, 6},
                 {7, 8, 9}
         };
         Sums[] sums = asyncSum(matrix);
-        Thread.sleep(30);
         assertThat(sums[0].getRowSum(), is(6));
         assertThat(sums[0].getColSum(), is(12));
         assertThat(sums[1].getRowSum(), is(15));
